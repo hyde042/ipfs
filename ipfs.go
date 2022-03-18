@@ -13,6 +13,7 @@ import (
 	"github.com/ipfs/go-ipfs/plugin/loader"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	"github.com/ipfs/go-path"
+	ipfspathresolver "github.com/ipfs/go-path/resolver"
 	unixfile "github.com/ipfs/go-unixfs/file"
 	"github.com/ipfs/interface-go-ipfs-core/options"
 )
@@ -79,7 +80,8 @@ func (f *FS) Open(name string) (fs.File, error) {
 
 	// TODO: IPNS resolution
 
-	c, _, err := f.n.Resolver.ResolveToLastNode(f.n.Context(), p)
+	resolver := ipfspathresolver.NewBasicResolver(f.n.UnixFSFetcherFactory)
+	c, _, err := resolver.ResolveToLastNode(f.n.Context(), p)
 	if err != nil {
 		return nil, fmt.Errorf("path resolve: %v", err)
 	}
